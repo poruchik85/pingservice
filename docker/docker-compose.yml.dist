@@ -23,7 +23,7 @@ services:
       - "8081:80"
     volumes:
       - "../back:/var/www"
-      - "./logs/nginx:/var/log/nginx"
+      - "./logs/nginx/back:/var/log/nginx/"
     depends_on:
       - db
     networks:
@@ -37,6 +37,8 @@ services:
     tmpfs:
      - /run
      - /tmp
+    environment:
+      POSTGRES_PASSWORD: postgres
     expose:
      - "5432"
     ports:
@@ -55,19 +57,22 @@ services:
       - '../front:/app'
     ports:
       - "8080:8080"
+    networks:
+      - vladis
   nginx_front:
     container_name: vladis_nginx_front
     build: build/nginx_front
     image: vladis/nginx_front
-    depends_on:
-      - node
     expose:
       - "80"
     ports:
       - "80:80"
     volumes:
-      - "./logs/nginx/:/var/log/nginx/"
-      - "../src/static:/etc/nginx/http"
+      - "./logs/nginx/front:/var/log/nginx/"
+    depends_on:
+      - node
+    networks:
+      - vladis
 networks:
   vladis:
     external: true

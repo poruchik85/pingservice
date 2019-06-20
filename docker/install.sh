@@ -15,6 +15,5 @@ if [[ ! -f "${DIR}/docker-compose.yml" ]]; then
 fi
 
 bash -c "cd ${DIR} && mkdir -p volumes/data && ${SUDO_CMD} chmod -R 775 volumes/data"
-bash -c "cd ${DIR} && mkdir -p volumes/npm && ${SUDO_CMD} chmod -R 775 volumes/npm"
 
 bash -c "${DIR}/up"
