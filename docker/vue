@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+. $(dirname $0)/func.sh
+
+node_container vue $@
