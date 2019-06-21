@@ -1,0 +1,3 @@
+{
+  "dbConnectionString": "dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis"
+}

@@ -1,4 +1,8 @@
 .idea
-/front/package-lock.json
 /docker/docker-compose.yml
 /docker/volumes/*
+
+/back/config.json
+/back/tests/utils
+
+/front/package-lock.json
