@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+. $(dirname $0)/func.sh
+
+php_container back/tests/utils/phpab -o back/tests/utils/autoload.php back/src back/tests/utils

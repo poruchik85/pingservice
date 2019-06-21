@@ -2,5 +2,12 @@
 
 . $(dirname $0)/func.sh
 
-php_container back/tests/utils/phpab -o back/tests/utils/autoload.php back/src back/tests/utils
-php_container back/tests/utils/phpunit --bootstrap back/tests/utils/autoload.php back/tests/*
+TEST=$1
+
+if [[ -z ${TEST} ]]; then
+    TEST="back/tests/"
+    else
+    TEST="back/tests/${TEST}"
+fi
+
+php_container back/tests/utils/phpunit --bootstrap back/tests/utils/autoload.php ${TEST}

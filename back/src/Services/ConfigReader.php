@@ -1,5 +1,12 @@
 <?php
 
+namespace Services;
+
+use ErrorException;
+use Exception;
+use JsonException;
+use LogicException;
+
 /**
  * @property string|null dbConnectionString
  */
@@ -10,6 +17,9 @@ class ConfigReader
         "dbConnectionString",
     ];
 
+    /**
+     * @var array $config
+     */
     private $config;
 
     /**
@@ -41,7 +51,7 @@ class ConfigReader
     /**
      * @throws Exception
      */
-    private function validateConfig() {
+    private function validateConfig(): void {
         foreach (self::CONFIG_PARAMETERS as $configParameter) {
             if (!isset($this->config[$configParameter])) {
                 throw new LogicException("Invalid config parameters");
@@ -54,7 +64,7 @@ class ConfigReader
      *
      * @return string|null
      */
-    public function __get(string $property = null) {
+    public function __get(string $property = null): ?string {
         if (isset($this->config[$property])) {
             return $this->config[$property];
         }

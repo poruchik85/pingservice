@@ -2,9 +2,13 @@
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Services\ConfigReader;
 
 class ConfigReaderTest extends TestCase
 {
+    /**
+     * @var string $fileSystem
+     */
     private $fileSystem;
 
     public function setUp(): void
@@ -17,15 +21,16 @@ class ConfigReaderTest extends TestCase
             ]
         ];
 
-        $this->fileSystem = vfsStream::setup('root', 444, $directory);
+        $this->fileSystem = vfsStream::setup("root", 444, $directory);
     }
 
     public function testGetConfig(): void
     {
         $configPath = sprintf("%s/%s", $this->fileSystem->url(), "config/config.json");
         $config = new ConfigReader($configPath);
+
         $this->assertEquals(
-            'dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis',
+            "dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis",
             $config->dbConnectionString
         );
     }

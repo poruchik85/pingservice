@@ -1,0 +1,174 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+use Services\QueryBuilder;
+
+class QueryBuilderTest extends TestCase
+{
+    public function testGenerateConditionStringSimpleVoid(): void
+    {
+        $conditionArray = [];
+
+        $reflector = new ReflectionClass(QueryBuilder::class);
+        $method = $reflector->getMethod("generateConditionsString");
+        $method->setAccessible(true);
+
+        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+
+        $this->assertEquals(
+            "(true)",
+            $conditionString
+        );
+    }
+
+    public function testGenerateConditionStringSimple(): void
+    {
+        $conditionArray = ["id" => 1];
+
+        $reflector = new ReflectionClass(QueryBuilder::class);
+        $method = $reflector->getMethod("generateConditionsString");
+        $method->setAccessible(true);
+
+        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+
+        $this->assertEquals(
+            "(id = 1)",
+            $conditionString
+        );
+    }
+
+    public function testGenerateConditionStringSimpleMultiple(): void
+    {
+        $conditionArray = ["id" => [1, 2]];
+
+        $reflector = new ReflectionClass(QueryBuilder::class);
+        $method = $reflector->getMethod("generateConditionsString");
+        $method->setAccessible(true);
+
+        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+
+        $this->assertEquals(
+            "((id = 1) or (id = 2))",
+            $conditionString
+        );
+    }
+
+    public function testGenerateConditionStringAndComplex(): void
+    {
+        $conditionArray = [
+            "and" => [
+                "id" => [1, 2],
+                "name" => "group",
+            ]
+        ];
+
+        $reflector = new ReflectionClass(QueryBuilder::class);
+        $method = $reflector->getMethod("generateConditionsString");
+        $method->setAccessible(true);
+
+        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+
+        $this->assertEquals(
+            "(((id = 1) or (id = 2)) and (name = 'group'))",
+            $conditionString
+        );
+    }
+
+    public function testGenerateConditionStringOrComplex(): void
+    {
+        $conditionArray = [
+            "or" => [
+                "and" => [
+                    "id" => 1,
+                    "name" => "group",
+                ],
+                "name" => "group1",
+            ]
+        ];
+
+        $reflector = new ReflectionClass(QueryBuilder::class);
+        $method = $reflector->getMethod("generateConditionsString");
+        $method->setAccessible(true);
+
+        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+
+        $this->assertEquals(
+            "(((id = 1) and (name = 'group')) or (name = 'group1'))",
+            $conditionString
+        );
+    }
+
+    public function testSimpleSelect(): void
+    {
+        $query = QueryBuilder::select(
+            "groups",
+            ["id" => 1]
+        );
+
+        $this->assertEquals(
+            "select * from groups where (id = 1) order by id asc;",
+            $query
+        );
+    }
+
+    public function testFullSelect(): void
+    {
+        $query = QueryBuilder::select(
+            "groups",
+            [
+                "or" => [
+                    "and" => [
+                        "id" => 1,
+                        "name" => "group",
+                    ],
+                    "name" => "group1",
+                ]
+            ],
+            "created_at",
+            "desc",
+            5,
+            1,
+            ["name", "created_at"]
+        );
+
+        $this->assertEquals(
+            "select name,created_at from groups where (((id = 1) and (name = 'group')) or (name = 'group1')) order by created_at desc limit 5 offset 1;",
+            $query
+        );
+    }
+
+    public function testSimpleInsert(): void
+    {
+        $query = QueryBuilder::insert(
+            "groups",
+            [
+                "id" => 23,
+                "name" => "group1",
+                "created_at" => "2019-06-20 13:04:44",
+            ]
+        );
+
+        $this->assertEquals(
+            "insert into groups (id,name,created_at) values (23,'group1','2019-06-20 13:04:44');",
+            $query
+        );
+    }
+
+    public function testSimpleUpdate(): void
+    {
+        $query = QueryBuilder::update(
+            "groups",
+            ["id" => [1, 2]],
+            [
+                "id" => 23,
+                "name" => "group1",
+                "created_at" => "2019-06-20 13:04:44",
+            ]
+        );
+
+        $this->assertEquals(
+            "update groups set id = 23,name = 'group1',created_at = '2019-06-20 13:04:44' where ((id = 1) or (id = 2));",
+            $query
+        );
+    }
+}
