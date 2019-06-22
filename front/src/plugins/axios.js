@@ -58,4 +58,6 @@ Plugin.install = function(Vue, options) {
 
 Vue.use(Plugin)
 
+Vue.axios.defaults.baseURL = "http://pingservice.local:8081/";
+
 export default Plugin;

@@ -7,6 +7,7 @@ use JsonException;
 use JsonSerializable;
 use LogicException;
 use Services\ConfigReader;
+use Services\Connector;
 use Services\PgConnector;
 use Services\QueryBuilder;
 
@@ -19,7 +20,7 @@ abstract class Model implements JsonSerializable
     protected const CREATED_AT_FIELD = "created_at";
 
     /**
-     * @var PgConnector $connector
+     * @var Connector $connector
      */
     protected static $connector;
 
@@ -29,8 +30,6 @@ abstract class Model implements JsonSerializable
     protected $fields = [];
 
     /**
-     * Model constructor.
-     *
      * @param $data
      *
      * @throws ErrorException
@@ -162,7 +161,7 @@ abstract class Model implements JsonSerializable
      * @return array|mixed
      */
     public function jsonSerialize() {
-        return get_object_vars($this);
+        return $this->fields;
     }
 
     /**

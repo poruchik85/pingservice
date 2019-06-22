@@ -5,24 +5,12 @@ namespace Services;
 use Exception;
 use PDO;
 
-class PgConnector
+class PgConnector extends Connector
 {
-    /**
-     * @var string $connectionString
-     */
-    private $connectionString;
-
-    /**
-     * @param $connectionString
-     */
-    public function __construct(string $connectionString) {
-        $this->connectionString = $connectionString;
-    }
-
     /**
      * @return PDO
      */
-    private function connect() {
+    protected function connect(): PDO {
         return new PDO(sprintf("pgsql:%s", $this->connectionString));
     }
 
@@ -31,7 +19,7 @@ class PgConnector
      *
      * @return array
      */
-    public function select(string $query) {
+    public function select(string $query):array {
         $connection = $this->connect();
 
         try {
@@ -57,6 +45,27 @@ class PgConnector
             $result = $connection->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
             return $result[0]["id"];
+        } catch (Exception $e) {
+            echo sprintf("DB connection error: %s", $e->getMessage());
+
+            die();
+        }
+    }
+
+    /**
+     * @param string $query
+     * @param array $parameters
+     *
+     * @return array
+     */
+    public function execute(string $query, array $parameters) {
+        $connection = $this->connect();
+
+        try {
+            $statement = $connection->prepare($query);
+            $statement->execute($parameters);
+
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             echo sprintf("DB connection error: %s", $e->getMessage());
 

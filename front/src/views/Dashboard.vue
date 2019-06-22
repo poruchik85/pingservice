@@ -10,7 +10,9 @@ export default {
 
   }),
   beforeMount() {
-
+    this.axios.get("/server/list").then((data) => {
+      console.log(data);
+    });
   },
   computed: {
 

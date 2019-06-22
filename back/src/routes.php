@@ -18,3 +18,5 @@ $router->post("/server", "Controllers\ServerController@createAction");
 $router->get("/ping/list", "Controllers\PingController@listAction");
 $router->get("/ping/{id}", "Controllers\PingController@getAction");
 $router->post("/ping", "Controllers\PingController@createAction");
+
+$router->get("/dashboard", "Controllers\DashboardController@indexAction");

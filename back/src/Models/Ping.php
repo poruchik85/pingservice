@@ -6,6 +6,7 @@ namespace Models;
  * @property int id
  * @property int server_id
  * @property string created_at
+ * @property bool success
  */
 class Ping extends Model
 {
@@ -13,6 +14,7 @@ class Ping extends Model
         "id",
         "server_id",
         "created_at",
+        "success"
     ];
 
     protected const REQUIRED_FIELDS = [

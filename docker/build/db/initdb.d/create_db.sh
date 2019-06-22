@@ -34,7 +34,8 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
     (
         id serial not null constraint pings_pkey primary key,
         created_at timestamp(0),
-        server_id integer not null constraint pings_server_id_foreign references servers
+        server_id integer not null constraint pings_server_id_foreign references servers,
+        success boolean default false not null
     );
 
     alter table pings owner to vladis;

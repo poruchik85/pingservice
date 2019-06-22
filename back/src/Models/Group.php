@@ -24,4 +24,13 @@ class Group extends Model
     ];
 
     protected const TABLE_NAME = "groups";
+
+    public function getServers() {
+        $query = <<<sql
+select * from vladis.public.groups;
+sql;
+
+        self::$connector->select($query);
+
+    }
 }
