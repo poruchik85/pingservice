@@ -21,35 +21,64 @@ class DashboardService
      */
     public function getData() {
         $query = <<<sql
-select
-    p.id
-        as ping_id,
-    p.success
-        as success,
-    p.created_at
-        as ping_created_at,
-    s.id
-        as server_id,
-    s.host
-        as host,
-    s.ip
-        as ip,
-    s.created_at
-        as server_created_at,
-    g.id
-        as group_id,
-    g.name
-        as group_name,
-    g.created_at
-        as group_created_at
+select 
+    id,
+    name,
+    created_at
 from
-    pings p
-    inner join servers s on p.server_id = s.id
-    inner join groups g on s.group_id = g.id
-order by g.created_at desc, s.created_at desc, p.created_at desc
+    groups
+order by created_at desc
 ;
 sql;
+        $groups = $this->connector->execute($query);
 
-        return $this->connector->execute($query, []);
+        $query = <<<sql
+select 
+    id,
+    host,
+    ip,
+    created_at,
+    group_id
+from
+    servers
+order by created_at desc
+;
+sql;
+        $servers = $this->connector->execute($query);
+
+        $query = <<<sql
+select 
+    id,
+    created_at,
+    server_id,
+    success
+from
+    pings
+order by created_at desc
+;
+sql;
+        $pings = $this->connector->execute($query);
+
+        $servers = array_map(function ($server) use ($pings) {
+            $server["pings"] = array_values(array_filter($pings, function ($ping) use ($server) {
+                return $ping["server_id"] === $server["id"];
+            }));
+
+            return $server;
+        }, $servers);
+
+        $groups = array_map(function ($group) use ($servers) {
+            $group["servers"] = array_values(array_filter($servers, function ($server) use ($group) {
+                return $server["group_id"] === $group["id"];
+            }));
+
+            return $group;
+        }, $groups);
+
+        return $groups;
+    }
+
+    public function ping() {
+
     }
 }

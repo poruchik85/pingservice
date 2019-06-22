@@ -43,5 +43,5 @@ abstract class Connector
      *
      * @return array
      */
-    public abstract function execute(string $query, array $parameters);
+    public abstract function execute(string $query, array $parameters = []);
 }

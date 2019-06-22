@@ -1,4 +1,4 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
   <v-app id="inspire" dark>
     <v-toolbar color="blue-grey darken-4" fixed app right class="theme--dark">
       <v-toolbar-title>Dashboard</v-toolbar-title>

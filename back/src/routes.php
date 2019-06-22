@@ -20,3 +20,4 @@ $router->get("/ping/{id}", "Controllers\PingController@getAction");
 $router->post("/ping", "Controllers\PingController@createAction");
 
 $router->get("/dashboard", "Controllers\DashboardController@indexAction");
+$router->post("/dashboard/ping", "Controllers\DashboardController@pingAction");

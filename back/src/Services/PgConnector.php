@@ -58,7 +58,7 @@ class PgConnector extends Connector
      *
      * @return array
      */
-    public function execute(string $query, array $parameters) {
+    public function execute(string $query, array $parameters = []) {
         $connection = $this->connect();
 
         try {
