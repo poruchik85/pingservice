@@ -69,7 +69,7 @@ class QueryBuilder
         }
 
         return sprintf(
-            "insert into %s (%s) values (%s);",
+            "insert into %s (%s) values (%s) returning id;",
             $table,
             implode(',', $fields),
             implode(',', $values)
@@ -86,7 +86,7 @@ class QueryBuilder
         }, array_keys($data), $data));
 
         return sprintf(
-            /** @lang text */ "update %s set %s where %s;",
+            /** @lang text */ "update %s set %s where %s returning id;",
             $table,
             $updationString,
             $conditionString

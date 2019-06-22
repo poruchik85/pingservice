@@ -48,13 +48,15 @@ class PgConnector
     /**
      * @param string $query
      *
-     * @return void
+     * @return int
      */
-    public function insert(string $query) {
+    public function insert(string $query): int {
         $connection = $this->connect();
 
         try {
-            $connection->prepare($query)->execute();
+            $result = $connection->query($query)->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result[0]["id"];
         } catch (Exception $e) {
             echo sprintf("DB connection error: %s", $e->getMessage());
 

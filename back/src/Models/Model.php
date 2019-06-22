@@ -16,6 +16,7 @@ abstract class Model implements JsonSerializable
     private const FIELDS = [];
     protected const REQUIRED_FIELDS = [];
     protected const IMMUTABLE_FIELDS = [];
+    protected const CREATED_AT_FIELD = "created_at";
 
     /**
      * @var PgConnector $connector
@@ -45,11 +46,23 @@ abstract class Model implements JsonSerializable
      *
      * @return Model
      */
-    public static function create(array $data): Model
-    {
+    public static function create(array $data): Model {
         $actualClass = static::class;
 
-        return new $actualClass($data);
+        /** @var Model $model */
+        $model = new $actualClass($data);
+
+        $created_at = self::CREATED_AT_FIELD;
+
+        if (in_array($created_at, static::FIELDS) && (!isset($model->$created_at) || $model->$created_at === null)) {
+            $model->$created_at = date('Y-m-d H:i:s');
+        }
+
+        if (!isset($model->id)) {
+            $model->save();
+        }
+
+        return $model;
     }
 
     /**
@@ -75,8 +88,7 @@ abstract class Model implements JsonSerializable
     /**
      * @return array
      */
-    public static function list(): array
-    {
+    public static function list(): array {
         $query = QueryBuilder::select(
             static::TABLE_NAME,
             [],
@@ -129,7 +141,7 @@ abstract class Model implements JsonSerializable
             );
         }
 
-        self::$connector->insert($query);
+        $this->id = self::$connector->insert($query);
     }
 
     /**
@@ -177,7 +189,7 @@ abstract class Model implements JsonSerializable
      * @return void
      */
     public function __set($field, $value) {
-        if (!in_array($field, static::FIELDS) || in_array($field, static::IMMUTABLE_FIELDS)) {
+        if (!in_array($field, static::FIELDS)) {
             throw new LogicException("Invalid field request");
         }
 

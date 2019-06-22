@@ -100,7 +100,7 @@ class QueryBuilderTest extends TestCase
         );
 
         $this->assertEquals(
-            "insert into groups (id,name,created_at) values (23,'group1','2019-06-20 13:04:44');",
+            "insert into groups (id,name,created_at) values (23,'group1','2019-06-20 13:04:44') returning id;",
             $query
         );
     }
@@ -118,7 +118,7 @@ class QueryBuilderTest extends TestCase
         );
 
         $this->assertEquals(
-            "update groups set id = 23,name = 'group1',created_at = '2019-06-20 13:04:44' where ((id = 1) or (id = 2));",
+            "update groups set id = 23,name = 'group1',created_at = '2019-06-20 13:04:44' where ((id = 1) or (id = 2)) returning id;",
             $query
         );
     }
