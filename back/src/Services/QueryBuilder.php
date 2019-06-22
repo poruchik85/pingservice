@@ -69,7 +69,7 @@ class QueryBuilder
         }
 
         return sprintf(
-            "insert into %s (%s) values (%s) returning id;",
+        /** @lang text */ "insert into %s (%s) values (%s) returning id;",
             $table,
             implode(',', $fields),
             implode(',', $values)
@@ -81,6 +81,10 @@ class QueryBuilder
         $conditionString = self::generateConditionsString($conditions);
         $updationString = implode(",", array_map(function ($field, $value) {
             $value = is_string($value) ? sprintf("'%s'", $value) : $value;
+
+            if ($value === null) {
+                $value = "NULL";
+            }
 
             return sprintf("%s = %s", $field, $value);
         }, array_keys($data), $data));
