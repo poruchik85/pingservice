@@ -5,96 +5,47 @@ use Services\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
-    public function testGenerateConditionStringSimpleVoid(): void
-    {
-        $conditionArray = [];
-
-        $reflector = new ReflectionClass(QueryBuilder::class);
-        $method = $reflector->getMethod("generateConditionsString");
-        $method->setAccessible(true);
-
-        $conditionString = $method->invokeArgs(null, [$conditionArray]);
-
-        $this->assertEquals(
-            "(true)",
-            $conditionString
-        );
-    }
-
-    public function testGenerateConditionStringSimple(): void
-    {
-        $conditionArray = ["id" => 1];
-
-        $reflector = new ReflectionClass(QueryBuilder::class);
-        $method = $reflector->getMethod("generateConditionsString");
-        $method->setAccessible(true);
-
-        $conditionString = $method->invokeArgs(null, [$conditionArray]);
-
-        $this->assertEquals(
-            "(id = 1)",
-            $conditionString
-        );
-    }
-
-    public function testGenerateConditionStringSimpleMultiple(): void
-    {
-        $conditionArray = ["id" => [1, 2]];
-
-        $reflector = new ReflectionClass(QueryBuilder::class);
-        $method = $reflector->getMethod("generateConditionsString");
-        $method->setAccessible(true);
-
-        $conditionString = $method->invokeArgs(null, [$conditionArray]);
-
-        $this->assertEquals(
-            "((id = 1) or (id = 2))",
-            $conditionString
-        );
-    }
-
-    public function testGenerateConditionStringAndComplex(): void
-    {
-        $conditionArray = [
-            "and" => [
-                "id" => [1, 2],
-                "name" => "group",
-            ]
-        ];
-
-        $reflector = new ReflectionClass(QueryBuilder::class);
-        $method = $reflector->getMethod("generateConditionsString");
-        $method->setAccessible(true);
-
-        $conditionString = $method->invokeArgs(null, [$conditionArray]);
-
-        $this->assertEquals(
-            "(((id = 1) or (id = 2)) and (name = 'group'))",
-            $conditionString
-        );
-    }
-
-    public function testGenerateConditionStringOrComplex(): void
-    {
-        $conditionArray = [
-            "or" => [
+    public function conditionsDataProvider() {
+        return [
+            [[], "(true)"],
+            [["id" => 1], "(id = 1)"],
+            [["id" => [1, 2]], "((id = 1) or (id = 2))"],
+            [[
                 "and" => [
-                    "id" => 1,
+                    "id" => [1, 2],
                     "name" => "group",
-                ],
-                "name" => "group1",
-            ]
+                ]
+            ], "(((id = 1) or (id = 2)) and (name = 'group'))"],
+            [[
+                "or" => [
+                    "and" => [
+                        "id" => 1,
+                        "name" => "group",
+                    ],
+                    "name" => "group1",
+                ]
+            ], "(((id = 1) and (name = 'group')) or (name = 'group1'))"],
         ];
+    }
 
+    /**
+     * @dataProvider conditionsDataProvider
+     *
+     * @param array $parameter
+     * @param string $expected
+     *
+     * @throws ReflectionException
+     */
+    public function testGenerateConditionString(array $parameter, string $expected): void {
         $reflector = new ReflectionClass(QueryBuilder::class);
         $method = $reflector->getMethod("generateConditionsString");
         $method->setAccessible(true);
 
-        $conditionString = $method->invokeArgs(null, [$conditionArray]);
+        $conditionString = $method->invokeArgs(null, [$parameter]);
 
         $this->assertEquals(
-            "(((id = 1) and (name = 'group')) or (name = 'group1'))",
-            $conditionString
+            $conditionString,
+            $expected
         );
     }
 

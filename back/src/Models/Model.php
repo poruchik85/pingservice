@@ -3,7 +3,6 @@
 namespace Models;
 
 use ErrorException;
-use Exception;
 use JsonException;
 use JsonSerializable;
 use LogicException;
@@ -57,8 +56,6 @@ abstract class Model implements JsonSerializable
      * @param int $id
      *
      * @return Model|null
-     *
-     * @throws Exception
      */
     public static function find(int $id): ?self {
         $query = QueryBuilder::select(
@@ -77,8 +74,6 @@ abstract class Model implements JsonSerializable
 
     /**
      * @return array
-     *
-     * @throws Exception
      */
     public static function list(): array
     {
@@ -133,8 +128,22 @@ abstract class Model implements JsonSerializable
                 $this->fields
             );
         }
-        var_dump($query);
+
         self::$connector->insert($query);
+    }
+
+    /**
+     * @param array $data
+     */
+    public function update(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            if (in_array($key, static::FIELDS) && !in_array($key, static::IMMUTABLE_FIELDS)) {
+                $this->$key = $value;
+            }
+        }
+
+        $this->save();
     }
 
     /**

@@ -30,13 +30,17 @@ class PgConnector
      * @param string $query
      *
      * @return array
-     *
-     * @throws Exception
      */
     public function select(string $query) {
         $connection = $this->connect();
 
-        $result = $connection->query($query)->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $result = $connection->query($query)->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            echo sprintf("DB connection error: %s", $e->getMessage());
+
+            die();
+        }
 
         return $result;
     }
@@ -49,6 +53,12 @@ class PgConnector
     public function insert(string $query) {
         $connection = $this->connect();
 
-        $connection->prepare($query)->execute();
+        try {
+            $connection->prepare($query)->execute();
+        } catch (Exception $e) {
+            echo sprintf("DB connection error: %s", $e->getMessage());
+
+            die();
+        }
     }
 }

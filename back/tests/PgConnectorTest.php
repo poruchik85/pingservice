@@ -11,11 +11,6 @@ class PgConnectorTest extends TestCase
     private $dbConnectionString;
 
     /**
-     * @var string $wrongDbConnectionString
-     */
-    private $wrongDbConnectionString;
-
-    /**
      * @var PgConnector $connector
      */
     private $connector;
@@ -23,7 +18,6 @@ class PgConnectorTest extends TestCase
     public function setUp(): void
     {
         $this->dbConnectionString = "dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis";
-        $this->wrongDbConnectionString = "dbname=vladis; host=po; port=5432; user=vladis; password=vladis";
 
         $this->connector = new PgConnector($this->dbConnectionString);
     }
@@ -40,17 +34,5 @@ class PgConnectorTest extends TestCase
             get_class($connection),
             "PDO"
         );
-    }
-
-    public function testWrongConnector(): void
-    {
-        $this->expectException(PDOException::class);
-
-        $connector = new PgConnector($this->wrongDbConnectionString);
-        $reflector = new ReflectionClass(PgConnector::class);
-        $method = $reflector->getMethod("connect");
-        $method->setAccessible(true);
-
-        $method->invokeArgs($connector, []);
     }
 }
