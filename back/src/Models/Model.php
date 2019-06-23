@@ -57,7 +57,7 @@ abstract class Model implements JsonSerializable
             $model->$created_at = date('Y-m-d H:i:s');
         }
 
-        if (!isset($model->id)) {
+        if (!isset($model->id) || $model->id === null) {
             $model->save();
         }
 
@@ -146,8 +146,7 @@ abstract class Model implements JsonSerializable
     /**
      * @param array $data
      */
-    public function update(array $data): void
-    {
+    public function update(array $data): void {
         foreach ($data as $key => $value) {
             if (in_array($key, static::FIELDS) && !in_array($key, static::IMMUTABLE_FIELDS)) {
                 $this->$key = $value;
@@ -155,6 +154,15 @@ abstract class Model implements JsonSerializable
         }
 
         $this->save();
+    }
+
+    public function delete(): void {
+        $query = QueryBuilder::delete(
+            static::TABLE_NAME,
+            ["id" => $this->id]
+        );
+
+        self::$connector->execute($query);
     }
 
     /**

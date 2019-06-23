@@ -9,6 +9,7 @@ $router->get("/group/list", "Controllers\GroupController@listAction");
 $router->get("/group/{id}", "Controllers\GroupController@getAction");
 $router->post("/group/{id}", "Controllers\GroupController@updateAction");
 $router->post("/group", "Controllers\GroupController@createAction");
+$router->delete("/group/{id}", "Controllers\GroupController@deleteAction");
 
 $router->get("/server/list", "Controllers\ServerController@listAction");
 $router->get("/server/{id}", "Controllers\ServerController@getAction");

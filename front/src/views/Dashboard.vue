@@ -3,32 +3,38 @@
     <v-flex class="column" xs7 md7 sm7>
       <v-layout row wrap>
     <v-flex class="column" xs6 md6 sm6>
-      <v-expansion-panel expand="true">
+      <v-expansion-panel :expand="true">
         <v-expansion-panel-content
                 v-for="(group, i) in groups"
                 :key="i"
         >
           <template v-slot:header>
-            <div><v-icon small @click.prevent="editGroup(group)" color="primary">edit</v-icon>  {{group.name}}</div>
+            <div>{{group.name}}</div>
           </template>
           <v-card>
             <v-card-text class="server-list-card">
               <v-list>
-                <template v-for="(server, index) in group.servers">
+                <v-list-tile class="server-group-dashboard">
+                  <v-icon small @click.prevent="editGroup(group)" color="primary" class="mr-2">edit</v-icon><v-icon small @click.prevent="deleteGroup(group)" color="error">delete</v-icon>
+                    <v-spacer></v-spacer>
+                  <v-icon small @click.prevent="createServerForGroup(group)" color="success">add_circle</v-icon>
+                </v-list-tile>
+                <v-divider></v-divider>
+                <template v-if="group.servers.length > 0" v-for="(server, index) in group.servers">
                   <v-list-tile
                           :key="index"
                           @click="selectServer(server)"
                   >
                     <v-list-tile-content>
                       <v-list-tile-title class="server-list-title">
-                        <v-icon class="server-list-info" v-if="server.pings.length===0">
+                        <v-icon small class="server-list-info" v-if="server.pings.length===0">
                           brightness_1
                         </v-icon>
-                        <v-icon class="server-list-info success--text" v-else-if="server.pings[0].success">
-                          check_circle
+                        <v-icon small class="server-list-info success--text" v-else-if="server.pings[0].success">
+                          brightness_1
                         </v-icon>
-                        <v-icon class="server-list-info error--text" v-else>
-                          cancel
+                        <v-icon small class="server-list-info error--text" v-else>
+                          brightness_1
                         </v-icon>{{server.host ? server.host : server.ip}}
                         <v-tooltip right v-if="server.host">
                           <template v-slot:activator="{ on }">
@@ -66,7 +72,7 @@
           </template>
         </v-card-title>
         <v-card-text class="server-list-card" v-if="server!==null">
-          <div v-for="ping in server.pings">
+          <div v-for="ping in server.pings.slice().reverse()">
             <v-icon class="ping-list-info success--text" v-if="ping.success">
               check_circle
             </v-icon>
@@ -93,8 +99,8 @@
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-spacer></v-spacer>
-            <v-btn color="accent" small @click="cancelEditGroup">Cancel</v-btn>
-            <v-btn color="success" small>Save</v-btn>
+            <v-btn color="accent" :disabled="editedGroup.name===null" small @click="cancelEditGroup">Cancel</v-btn>
+            <v-btn color="success" :disabled="editedGroup.name===null" small @click="saveGroup">Save</v-btn>
           </v-flex>
         </v-card-text>
       </v-card>
@@ -102,10 +108,17 @@
     <v-flex class="column" xs12 md12 sm12>
       <v-card>
         <v-card-title>
-          Create/edit server
+          Create new server
         </v-card-title>
         <v-card-text>
-
+          <v-flex xs12 sm12 md12>
+            <v-text-field label="Server title" v-model="editedServer.name"></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm12 md12>
+            <v-spacer></v-spacer>
+            <v-btn color="accent" :disabled="editedGroup.name===null" small @click="cancelEditGroup">Cancel</v-btn>
+            <v-btn color="success" :disabled="editedGroup.name===null" small @click="saveGroup">Save</v-btn>
+          </v-flex>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -140,16 +153,44 @@ export default {
       this.editedGroup = {...this.defaultEditedGroup};
       this.editedGroupName = null;
     },
+    saveGroup() {
+      let url = this.editedGroup.id === null ? "/group" : "/group/" + this.editedGroup.id;
+
+      let params = new URLSearchParams();
+      Object.keys(this.editedGroup).forEach((k) => {
+        this.editedGroup[k] !== null && params.append(k, this.editedGroup[k]);
+      });
+
+      this.axios({
+        method: 'post',
+        url: url,
+        data: params,
+      }).then(() => {
+        this.refreshData();
+        this.cancelEditGroup();
+      });
+    },
+    deleteGroup(group) {
+      this.axios.delete("/group/" + group.id).then(() => {
+        this.refreshData();
+      });
+    },
+    createServerForGroup() {
+
+    },
     ping() {
       this.axios.post("/dashboard/ping/" + this.server.id).then((data) => {
+        this.groups = data.data;
+      });
+    },
+    refreshData() {
+      this.axios.get("/dashboard").then((data) => {
         this.groups = data.data;
       });
     }
   },
   beforeMount() {
-    this.axios.get("/dashboard").then((data) => {
-      this.groups = data.data;
-    });
+    this.refreshData();
   },
   computed: {
 
@@ -164,8 +205,10 @@ export default {
   .server-list-card {
     padding: 0;
   }
+  .server-list-card .v-list {
+    padding-bottom: 0;
+  }
   .server-list-info {
-    font-size: 22px;
     margin-right: 10px;
   }
   .ping-list-info {
@@ -180,5 +223,15 @@ export default {
   }
   .column {
     padding: 10px;
+  }
+  .v-card, .v-expansion-panel__container, .v-expansion-panel__body {
+    background-color: #263238!important;
+  }
+  .v-list {
+    background-color: #2c3a41!important;
+  }
+  .server-group-dashboard .v-list__tile {
+      height: 20px;
+      padding-bottom: 8px;
   }
 </style>

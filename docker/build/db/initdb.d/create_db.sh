@@ -20,8 +20,8 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
     create table servers
     (
         id serial not null constraint servers_pkey primary key,
-        host varchar(255),
-        ip varchar(40),
+        name varchar(255),
+        ip varchar(255),
         created_at timestamp(0),
         group_id integer not null constraint servers_group_id_foreign references groups on delete cascade
     );
@@ -34,7 +34,7 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
     (
         id serial not null constraint pings_pkey primary key,
         created_at timestamp(0),
-        server_id integer not null constraint pings_server_id_foreign references servers,
+        server_id integer not null constraint pings_server_id_foreign references servers on delete cascade,
         success boolean default false not null
     );
 

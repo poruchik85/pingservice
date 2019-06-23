@@ -7,6 +7,7 @@ use HttpRequestException;
 /**
  * @method get(string $route, string $method)
  * @method post(string $route, string $method)
+ * @method delete(string $string, string $string1)
  */
 class Router
 {
@@ -20,7 +21,8 @@ class Router
      */
     private $supportedHttpMethods = array(
         "GET",
-        "POST"
+        "POST",
+        "DELETE",
     );
 
     /**

@@ -27,7 +27,7 @@ select
     created_at
 from
     groups
-order by created_at desc
+order by created_at asc
 ;
 sql;
         $groups = $this->connector->execute($query);
@@ -35,13 +35,13 @@ sql;
         $query = <<<sql
 select 
     id,
-    host,
+    name,
     ip,
     created_at,
     group_id
 from
     servers
-order by created_at desc
+order by created_at asc
 ;
 sql;
         $servers = $this->connector->execute($query);
@@ -54,7 +54,7 @@ select
     success
 from
     pings
-order by created_at desc
+order by created_at asc
 ;
 sql;
         $pings = $this->connector->execute($query);

@@ -34,7 +34,19 @@ class GroupController
      *
      * @return false|string
      */
-    public function saveAction(Request $request, array $parameters) {
+    public function createAction(Request $request, array $parameters) {
+        $group = Group::create($request->get());
+
+        return json_encode($group);
+    }
+
+    /**
+     * @param Request $request
+     * @param array $parameters
+     *
+     * @return false|string
+     */
+    public function updateAction(Request $request, array $parameters) {
         $group = Group::find($parameters["id"]);
 
         $group->update($request->get());
@@ -48,9 +60,11 @@ class GroupController
      *
      * @return false|string
      */
-    public function updateAction(Request $request, array $parameters) {
-        $group = Group::create($request->get());
+    public function deleteAction(Request $request, array $parameters) {
+        $group = Group::find($parameters["id"]);
 
-        return json_encode($group);
+        $group->delete();
+
+        return "";
     }
 }

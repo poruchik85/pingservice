@@ -53,4 +53,18 @@ class ServerController
 
         return json_encode($server);
     }
+
+    /**
+     * @param Request $request
+     * @param array $parameters
+     *
+     * @return false|string
+     */
+    public function deleteAction(Request $request, array $parameters) {
+        $server = Server::find($parameters["id"]);
+
+        $server->delete();
+
+        return "";
+    }
 }

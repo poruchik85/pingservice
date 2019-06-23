@@ -97,6 +97,17 @@ class QueryBuilder
         );
     }
 
+    public static function delete(string $table, array $conditions)
+    {
+        $conditionString = self::generateConditionsString($conditions);
+
+        return sprintf(
+            /** @lang text */ "delete from %s where %s;",
+            $table,
+            $conditionString
+        );
+    }
+
     /**
      * @param array $conditions
      *

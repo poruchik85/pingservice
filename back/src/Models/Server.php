@@ -5,7 +5,7 @@ namespace Models;
 /**
  * @property int id
  * @property string ip
- * @property string host
+ * @property string name
  * @property int group_id
  * @property string created_at
  */
@@ -14,7 +14,7 @@ class Server extends Model
     protected const FIELDS = [
         "id",
         "ip",
-        "host",
+        "name",
         "group_id",
         "created_at",
     ];
