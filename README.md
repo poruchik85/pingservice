@@ -2,7 +2,7 @@
 
 Проект состоит из трёх частей:
 
-####1.1. Серверная часть.
+#### 1.1. Серверная часть.
 Папка *./back*.
 
 Реализована на PHP, не используются фреймворки. 
@@ -12,14 +12,14 @@
 * *./back/tests/* - тесты;
 * *./back/config.json* - конфиг.
 
-####1.2. Клиентская часть.
+#### 1.2. Клиентская часть.
 Папка *./front*. 
 
 Реализована на Vuejs.
 
 Стандартный проект, созданный с **[vue-cli 3](https://cli.vuejs.org/)**. Также используются [vuex](https://vuex.vuejs.org/), [vuetify](https://vuetifyjs.com/) и [material icons](https://material.io/tools/icons/).
 
-####1.3. Инфраструктура.
+#### 1.3. Инфраструктура.
 Папка *./docker*.
 
 Папка содержит конфиги [докера](https://www.docker.com/) и [докер-композа](https://docs.docker.com/compose/), а также скрипты для управления проектом и простого доступа к контейнерам.
@@ -48,7 +48,7 @@
 
 Я использовал виртуальную машину, созданную в **[VMware Workstation Player](https://www.vmware.com/ru/products/workstation-player/workstation-player-evaluation.html) 12.5.9 build-7535481** (сейчас на сайте уже новее, но, думаю, это не важно) и запущенную локально c 1024MB памяти и 10GB HDD.  
 
-####2.1. Установка убунты.
+#### 2.1. Установка убунты.
 Просто стандартная установка, все параметры по умолчанию, на вопрос про **open ssh** нужно поставить галочку **Install OpenSSH server**, чтобы после установки с этим не заморачиваться, никаких дополнительных пакетов, кроме **OpenSSH**, добавлять не нужно. **Важно: не надо менять язык во время установки. Локализация на сервере может вызвать непредсказуемые катаклизмы, и вообще не комильфо.**
 
 После установки необходимо проверить доступность сервера по *ssh* любым клиентом, например *putty* (IP сервера можно узнать в консоли VM командой `ifconfig`). Все последующие пункты по умолчанию выполняются в ssh-консоли в домашней папке пользователя, созданного при установке.
@@ -63,7 +63,7 @@ sudo bash -c "echo 127.0.0.1 localhost $(hostname) >> /etc/hosts"
 sudo lsb_release -a
 ```
  
-####2.2. Установка **[git](https://git-scm.com/)**
+#### 2.2. Установка **[git](https://git-scm.com/)**
 Установка:
 ```bash
 sudo apt update
@@ -78,7 +78,7 @@ git config --global user.email "youremail@domain.com"
 ```bash
 git --version
 ```
-####2.3. Установка **[docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)**
+#### 2.3. Установка **[docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)**
 ```bash
 sudo apt update
 sudo apt install -y \
@@ -109,7 +109,7 @@ newgrp docker
 sudo service docker restart
 ```
 
-####2.4. Установка **[docker-compose](https://docs.docker.com/compose/install/)**
+#### 2.4. Установка **[docker-compose](https://docs.docker.com/compose/install/)**
 Установка:
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -121,7 +121,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 ```
 
-####2.5. Клонирование и запуск проекта:
+#### 2.5. Клонирование и запуск проекта:
 Клонирование:
 ```bash
 git clone https://github.com/poruchik85/pingservice.git
@@ -152,7 +152,7 @@ Note that the development build is not optimized.
 To create a production build, run npm run build.
 ```
 
-####2.6. hosts
+#### 2.6. hosts
 На локальной машине добавляем в **hosts** запись
 ```bash
 ip_сервера      pingservice.local
