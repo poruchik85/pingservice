@@ -85,7 +85,7 @@
     <v-flex class="column" xs6 md6 sm6>
       <v-card>
         <v-card-title>
-          <template v-if="groups.count===0">Please create group and server <v-icon small class="error--text mr-2">arrow_forward</v-icon></template>
+          <template v-if="groups === null || groups.count===0">Please create group and server <v-icon small class="error--text mr-2">arrow_forward</v-icon></template>
           <template v-else-if="selectedServer===null"><v-icon small class="error--text mr-2">arrow_back</v-icon> Please select server</template>
           <template v-else>
             <template v-if="selectedServer.name">
