@@ -152,6 +152,11 @@ Note that the development build is not optimized.
 To create a production build, run npm run build.
 ```
 
+Поднимаем контейнеры, которые не запускались во время инсталла:
+```bash
+docker/up
+```
+
 #### 2.6. hosts
 На локальной машине добавляем в **hosts** запись
 ```bash
