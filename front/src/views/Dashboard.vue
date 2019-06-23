@@ -15,9 +15,25 @@
             <v-card-text class="server-list-card">
               <v-list>
                 <v-list-tile class="server-group-dashboard">
-                  <v-icon small @click.prevent="editGroup(group)" color="primary" class="mr-2">edit</v-icon><v-icon small @click.prevent="deleteGroup(group)" color="error">delete</v-icon>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" small @click.prevent="editGroup(group)" color="primary" class="mr-1">edit</v-icon>
+                    </template>
+                    <span>Edit group</span>
+                  </v-tooltip>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" small @click.prevent="createServerForGroup(group)" color="success">add_circle</v-icon>
+                    </template>
+                    <span>Add server</span>
+                  </v-tooltip>
                     <v-spacer></v-spacer>
-                  <v-icon small @click.prevent="createServerForGroup(group)" color="success">add_circle</v-icon>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" small @click.prevent="deleteGroup(group)" color="error">delete</v-icon>
+                    </template>
+                    <span>Remove group</span>
+                  </v-tooltip>
                 </v-list-tile>
                 <v-divider></v-divider>
                 <template v-if="group.servers.length > 0" v-for="(server, serverIndex) in group.servers">
@@ -27,23 +43,15 @@
                   >
                     <v-list-tile-content>
                       <v-list-tile-title class="server-list-title">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-icon v-on="on" small class="server-list-info primary--text mr-1" @click="editServer(server)">edit</v-icon>
+                          </template>
+                          <span>Edit server</span>
+                        </v-tooltip>
                         <v-icon
                                 small
-                                class="server-list-info primary--text"
-                                @click="editServer(server)"
-                        >
-                          edit
-                        </v-icon>
-                        <v-icon
-                                small
-                                class="server-list-info error--text"
-                                @click="deleteServer(server)"
-                        >
-                          delete
-                        </v-icon>
-                        <v-icon
-                                small
-                                class="server-list-info"
+                                class="server-list-info mr-1"
                                 :class="{'success--text': server.pings.length>0 && server.pings[0].success === true, 'error--text': server.pings.length>0 && server.pings[0].success === false}"
                         >
                           brightness_1
@@ -53,6 +61,12 @@
                             <span v-on="on" class="ip-helper">?</span>
                           </template>
                           <span>{{server.ip}}</span>
+                        </v-tooltip>
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-icon v-on="on" small class="server-list-info server-list-info-right server-list-info error--text" @click="deleteServer(server)">delete</v-icon>
+                          </template>
+                          <span>Remove server</span>
                         </v-tooltip>
                       </v-list-tile-title>
                       <v-list-tile-sub-title v-if="server.pings.length > 0">
@@ -113,20 +127,22 @@
         </v-card-title>
         <v-card-text>
           <v-flex xs12 sm12 md12>
-            <v-text-field label="Group title *" v-model="editedGroup.name"></v-text-field>
+            <v-text-field id="edited-group-name" label="Group title *" v-model="editedGroup.name"></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-spacer></v-spacer>
             <v-btn color="accent" :disabled="editedGroup.name===null" small @click="cancelEditGroup">Cancel</v-btn>
             <v-btn color="success" :disabled="editedGroup.name===null" small @click="saveGroup">Save</v-btn>
           </v-flex>
+          <div class="caption pt-4 form-caption">* required parameters</div>
         </v-card-text>
       </v-card>
     </v-flex>
     <v-flex class="column" xs12 md12 sm12>
       <v-card>
         <v-card-title>
-          Create new server
+          <template v-if="editedServer.id===null">Create server</template>
+          <template v-else>Edit server &nbsp;<span class="accent--text font-weight-bold">{{editedServerName}}</span></template>
         </v-card-title>
         <v-card-text>
           <v-flex xs12 sm12 md12>
@@ -150,6 +166,7 @@
             <v-btn color="accent" :disabled="editedServer.name===null && editedServer.ip===null && editedServer.group_id===null" small @click="cancelEditServer">Cancel</v-btn>
             <v-btn color="success" :disabled="editedServer.ip===null || editedServer.group_id===null" small @click="saveServer">Save</v-btn>
           </v-flex>
+          <div class="caption pt-4 form-caption">* required parameters</div>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -199,6 +216,7 @@ export default {
     editGroup(group) {
       this.editedGroup = {id: group.id, name: group.name};
       this.editedGroupName = group.name;
+      this.$el.querySelector('#edited-group-name').focus();
     },
     cancelEditGroup() {
       this.editedGroup = {...this.defaultEditedGroup};
@@ -229,6 +247,7 @@ export default {
     editServer(server) {
       this.editedServer = {id: server.id, name: server.name, ip: server.ip, group_id: server.group_id};
       this.editedServerName = server.name ? server.name : server.ip;
+      this.$el.querySelector('#server-title').focus();
     },
     cancelEditServer() {
       this.editedServer = {...this.defaultEditedServer};
@@ -306,12 +325,12 @@ export default {
   .server-list-card .v-list {
     padding-bottom: 0;
   }
-  .server-list-info {
-    margin-right: 3px;
-  }
   .ping-list-info {
     font-size: 18px;
     margin-right: 10px;
+  }
+  .server-list-info-right {
+    float: right;
   }
   .ip-helper {
     border: 1px dotted;
@@ -331,5 +350,8 @@ export default {
   .server-group-dashboard .v-list__tile {
       height: 20px;
       padding-bottom: 8px;
+  }
+  .form-caption {
+    text-align: right;
   }
 </style>
