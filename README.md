@@ -44,7 +44,7 @@
 
 # 2. Установка и запуск
 
-В этом разделе по шагам описывается процесс запуска на свежеустановленной **[Ubuntu server 18.04.2 amd64](https://ubuntu.com/download/server/thank-you?country=RU&version=18.04.2&architecture=amd64)**. Разумеется, можно использовать любой другой дистрибутив линукс, но команды будут отличаться, если он не **[debian](https://www.debian.org/) - based**.
+В этом разделе по шагам описывается процесс запуска на свежеустановленной **[Ubuntu server 18.04.2 amd64](https://ubuntu.com/download/server/thank-you?country=RU&version=18.04.2&architecture=amd64)**. Разумеется, можно использовать любой другой дистрибутив линукс, но процесс установки может сильно отличаться, если дистрибутив не **[debian-based](https://www.debian.org/)**.
 
 Я использовал виртуальную машину, созданную в **[VMware Workstation Player](https://www.vmware.com/ru/products/workstation-player/workstation-player-evaluation.html) 12.5.9 build-7535481** (сейчас на сайте уже новее, но, думаю, это не важно) и запущенную локально c 1024MB памяти и 10GB HDD.  
 
