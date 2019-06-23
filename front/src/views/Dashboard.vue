@@ -5,8 +5,8 @@
     <v-flex class="column" xs6 md6 sm6>
       <v-expansion-panel :expand="true">
         <v-expansion-panel-content
-                v-for="(group, i) in groups"
-                :key="i"
+                v-for="(group, groupIndex) in groups"
+                :key="groupIndex"
         >
           <template v-slot:header>
             <div>{{group.name}}</div>
@@ -20,10 +20,10 @@
                   <v-icon small @click.prevent="createServerForGroup(group)" color="success">add_circle</v-icon>
                 </v-list-tile>
                 <v-divider></v-divider>
-                <template v-if="group.servers.length > 0" v-for="(server, index) in group.servers">
+                <template v-if="group.servers.length > 0" v-for="(server, serverIndex) in group.servers">
                   <v-list-tile
-                          :key="index"
-                          @click="selectServer(server)"
+                          :key="serverIndex"
+                          @click="selectServer(groupIndex, serverIndex)"
                   >
                     <v-list-tile-content>
                       <v-list-tile-title class="server-list-title">
@@ -48,9 +48,9 @@
                         >
                           brightness_1
                         </v-icon>{{server.name ? server.name : server.ip}}
-                        <v-tooltip right v-if="server.name">
+                        <v-tooltip right v-if="server.name && server.name !== server.ip">
                           <template v-slot:activator="{ on }">
-                            <span v-on="on" class="ip-helper">ip</span>
+                            <span v-on="on" class="ip-helper">?</span>
                           </template>
                           <span>{{server.ip}}</span>
                         </v-tooltip>
@@ -60,7 +60,7 @@
                       </v-list-tile-sub-title>
                     </v-list-tile-content>
                   </v-list-tile>
-                  <v-divider v-if="index+1 < group.servers.length"></v-divider>
+                  <v-divider v-if="serverIndex+1 < group.servers.length"></v-divider>
                 </template>
               </v-list>
             </v-card-text>
@@ -71,20 +71,26 @@
     <v-flex class="column" xs6 md6 sm6>
       <v-card>
         <v-card-title>
-          <template v-if="server===null"><v-icon small class="error--text mr-2">arrow_back</v-icon> Please select server</template>
+          <template v-if="selectedServer===null"><v-icon small class="error--text mr-2">arrow_back</v-icon> Please select server</template>
           <template v-else>
-            <template v-if="server.name">
-              {{server.name}} ({{server.ip}})
+            <template v-if="selectedServer.name">
+              {{selectedServer.name}} ({{selectedServer.ip}})
             </template>
-            <template v-else-if="server.ip">
-              {{server.ip}}
+            <template v-else-if="selectedServer.ip">
+              {{selectedServer.ip}}
             </template>
             <v-spacer></v-spacer>
-            <v-btn color="success" small @click="ping">PING</v-btn>
+            <v-btn
+                    color="success"
+                    small
+                    @click="ping"
+                    :loading="pingLoading"
+                    :disabled="pingLoading"
+            >PING</v-btn>
           </template>
         </v-card-title>
-        <v-card-text class="server-list-card" v-if="server!==null">
-          <div v-for="ping in server.pings">
+        <v-card-text class="server-list-card" v-if="selectedServer!==null">
+          <div v-for="ping in selectedServer.pings">
             <v-icon class="ping-list-info success--text" v-if="ping.success">
               check_circle
             </v-icon>
@@ -155,7 +161,10 @@ export default {
   name: 'Dashboard',
   data: () => ({
     groups: {},
-    server: null,
+    selectedServerParams: {
+      groupIndex: null,
+      serverIndex: null,
+    },
     defaultEditedGroup: {
       id: null,
       name: null,
@@ -178,10 +187,14 @@ export default {
       group_id: null,
     },
     editedServerName: null,
+    pingLoading: false,
   }),
   methods: {
-    selectServer(server) {
-      this.server = server;
+    selectServer(groupIndex, serverIndex) {
+      this.selectedServerParams = {
+        groupIndex: groupIndex,
+        serverIndex: serverIndex,
+      };
     },
     editGroup(group) {
       this.editedGroup = {id: group.id, name: group.name};
@@ -241,7 +254,10 @@ export default {
     deleteServer(server) {
       this.axios.delete("/server/" + server.id).then(() => {
         this.refreshData();
-        this.server = null
+        this.selectedServerParams = {
+          groupIndex: null,
+          serverIndex: null,
+        };
       });
     },
     createServerForGroup(group) {
@@ -250,21 +266,32 @@ export default {
       this.$el.querySelector('#server-title').focus();
     },
     ping() {
-      this.axios.post("/dashboard/ping/" + this.server.id).then((data) => {
-        this.groups = data.data;
+      this.pingLoading = true;
+      this.axios.post("/dashboard/ping/" + this.selectedServer.id).then(() => {
+        this.refreshData();
+        this.pingLoading = false;
       });
     },
     refreshData() {
       this.axios.get("/dashboard").then((data) => {
         this.groups = data.data;
       });
-    }
+    },
   },
   beforeMount() {
     this.refreshData();
   },
   computed: {
+    selectedServer() {
+      if (this.selectedServerParams.groupIndex !== null &&
+              this.selectedServerParams.serverIndex !== null &&
+              this.groups[this.selectedServerParams.groupIndex] &&
+              this.groups[this.selectedServerParams.groupIndex]["servers"][this.selectedServerParams.serverIndex]) {
+        return this.groups[this.selectedServerParams.groupIndex]["servers"][this.selectedServerParams.serverIndex];
+      }
 
+      return null;
+    },
   }
 }
 </script>

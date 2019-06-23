@@ -2,6 +2,9 @@
 
 namespace Services;
 
+use Models\Ping;
+use Models\Server;
+
 class DashboardService
 {
     /**
@@ -78,7 +81,16 @@ sql;
         return $groups;
     }
 
-    public function ping() {
+    /**
+     * @param Server $server
+     */
+    public function ping(Server $server) {
 
+        exec(sprintf("ping -n -c 2 %s", $server->ip), $result, $status);
+
+        Ping::create([
+            "server_id" => $server->id,
+            "success" => $status === 0 ? 'true' : 'false',
+        ]);
     }
 }

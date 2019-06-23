@@ -3,10 +3,12 @@
 namespace Controllers;
 
 use JsonException;
+use Models\Server;
 use Services\ConfigReader;
 use Services\Connector;
 use Services\DashboardService;
 use Services\PgConnector;
+use Services\Router\Request;
 
 class DashboardController
 {
@@ -34,13 +36,19 @@ class DashboardController
     }
 
     /**
+     * @param Request $request
+     * @param array $parameters
+     *
      * @return false|string
      */
-    public function pingAction() {
+    public function pingAction(Request $request, array $parameters) {
+        /** @var Server $server */
+        $server = Server::find($parameters["id"]);
+
         $dashboardService = new DashboardService($this->connector);
 
-        $dashboardService->ping();
+        $dashboardService->ping($server);
 
-        return json_encode($dashboardService->getData());
+        return "";
     }
 }
