@@ -178,7 +178,7 @@
 export default {
   name: 'Dashboard',
   data: () => ({
-    groups: {},
+    groups: [],
     selectedServerParams: {
       groupIndex: null,
       serverIndex: null,
