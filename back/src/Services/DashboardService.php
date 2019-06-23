@@ -54,7 +54,7 @@ select
     success
 from
     pings
-order by created_at asc
+order by created_at desc
 ;
 sql;
         $pings = $this->connector->execute($query);

@@ -27,16 +27,28 @@
                   >
                     <v-list-tile-content>
                       <v-list-tile-title class="server-list-title">
-                        <v-icon small class="server-list-info" v-if="server.pings.length===0">
-                          brightness_1
+                        <v-icon
+                                small
+                                class="server-list-info primary--text"
+                                @click="editServer(server)"
+                        >
+                          edit
                         </v-icon>
-                        <v-icon small class="server-list-info success--text" v-else-if="server.pings[0].success">
-                          brightness_1
+                        <v-icon
+                                small
+                                class="server-list-info error--text"
+                                @click="deleteServer(server)"
+                        >
+                          delete
                         </v-icon>
-                        <v-icon small class="server-list-info error--text" v-else>
+                        <v-icon
+                                small
+                                class="server-list-info"
+                                :class="{'success--text': server.pings.length>0 && server.pings[0].success === true, 'error--text': server.pings.length>0 && server.pings[0].success === false}"
+                        >
                           brightness_1
-                        </v-icon>{{server.host ? server.host : server.ip}}
-                        <v-tooltip right v-if="server.host">
+                        </v-icon>{{server.name ? server.name : server.ip}}
+                        <v-tooltip right v-if="server.name">
                           <template v-slot:activator="{ on }">
                             <span v-on="on" class="ip-helper">ip</span>
                           </template>
@@ -59,10 +71,10 @@
     <v-flex class="column" xs6 md6 sm6>
       <v-card>
         <v-card-title>
-          <template v-if="server===null"><v-icon class="error--text mr-3">arrow_back</v-icon> Please select server</template>
+          <template v-if="server===null"><v-icon small class="error--text mr-2">arrow_back</v-icon> Please select server</template>
           <template v-else>
-            <template v-if="server.host">
-              {{server.host}} ({{server.ip}})
+            <template v-if="server.name">
+              {{server.name}} ({{server.ip}})
             </template>
             <template v-else-if="server.ip">
               {{server.ip}}
@@ -72,7 +84,7 @@
           </template>
         </v-card-title>
         <v-card-text class="server-list-card" v-if="server!==null">
-          <div v-for="ping in server.pings.slice().reverse()">
+          <div v-for="ping in server.pings">
             <v-icon class="ping-list-info success--text" v-if="ping.success">
               check_circle
             </v-icon>
@@ -95,7 +107,7 @@
         </v-card-title>
         <v-card-text>
           <v-flex xs12 sm12 md12>
-            <v-text-field label="Group title" v-model="editedGroup.name"></v-text-field>
+            <v-text-field label="Group title *" v-model="editedGroup.name"></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-spacer></v-spacer>
@@ -112,12 +124,25 @@
         </v-card-title>
         <v-card-text>
           <v-flex xs12 sm12 md12>
-            <v-text-field label="Server title" v-model="editedServer.name"></v-text-field>
+            <v-select
+                    v-if="groups.length > 0"
+                    label="Server group *"
+                    :items="groups"
+                    item-text="name"
+                    item-value="id"
+                    v-model="editedServer.group_id"
+            ></v-select>
+          </v-flex>
+          <v-flex xs12 sm12 md12>
+            <v-text-field id="server-title" label="Server title" v-model="editedServer.name"></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm12 md12>
+            <v-text-field label="Host name / IP *" v-model="editedServer.ip"></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-spacer></v-spacer>
-            <v-btn color="accent" :disabled="editedGroup.name===null" small @click="cancelEditGroup">Cancel</v-btn>
-            <v-btn color="success" :disabled="editedGroup.name===null" small @click="saveGroup">Save</v-btn>
+            <v-btn color="accent" :disabled="editedServer.name===null && editedServer.ip===null && editedServer.group_id===null" small @click="cancelEditServer">Cancel</v-btn>
+            <v-btn color="success" :disabled="editedServer.ip===null || editedServer.group_id===null" small @click="saveServer">Save</v-btn>
           </v-flex>
         </v-card-text>
       </v-card>
@@ -133,13 +158,26 @@ export default {
     server: null,
     defaultEditedGroup: {
       id: null,
-      name: null
+      name: null,
     },
     editedGroup: {
       id: null,
-      name: null
+      name: null,
     },
     editedGroupName: null,
+    defaultEditedServer: {
+      id: null,
+      name: null,
+      ip: null,
+      group_id: null,
+    },
+    editedServer: {
+      id: null,
+      name: null,
+      ip: null,
+      group_id: null,
+    },
+    editedServerName: null,
   }),
   methods: {
     selectServer(server) {
@@ -175,8 +213,41 @@ export default {
         this.refreshData();
       });
     },
-    createServerForGroup() {
+    editServer(server) {
+      this.editedServer = {id: server.id, name: server.name, ip: server.ip, group_id: server.group_id};
+      this.editedServerName = server.name ? server.name : server.ip;
+    },
+    cancelEditServer() {
+      this.editedServer = {...this.defaultEditedServer};
+      this.editedServerName = null;
+    },
+    saveServer() {
+      let url = this.editedServer.id === null ? "/server" : "/server/" + this.editedServer.id;
 
+      let params = new URLSearchParams();
+      Object.keys(this.editedServer).forEach((k) => {
+        this.editedServer[k] !== null && params.append(k, this.editedServer[k]);
+      });
+
+      this.axios({
+        method: 'post',
+        url: url,
+        data: params,
+      }).then(() => {
+        this.refreshData();
+        this.cancelEditServer();
+      });
+    },
+    deleteServer(server) {
+      this.axios.delete("/server/" + server.id).then(() => {
+        this.refreshData();
+        this.server = null
+      });
+    },
+    createServerForGroup(group) {
+      this.cancelEditServer();
+      this.editedServer.group_id = group.id;
+      this.$el.querySelector('#server-title').focus();
     },
     ping() {
       this.axios.post("/dashboard/ping/" + this.server.id).then((data) => {
@@ -209,7 +280,7 @@ export default {
     padding-bottom: 0;
   }
   .server-list-info {
-    margin-right: 10px;
+    margin-right: 3px;
   }
   .ping-list-info {
     font-size: 18px;

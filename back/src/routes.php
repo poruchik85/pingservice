@@ -15,6 +15,7 @@ $router->get("/server/list", "Controllers\ServerController@listAction");
 $router->get("/server/{id}", "Controllers\ServerController@getAction");
 $router->post("/server/{id}", "Controllers\ServerController@updateAction");
 $router->post("/server", "Controllers\ServerController@createAction");
+$router->delete("/server/{id}", "Controllers\ServerController@deleteAction");
 
 $router->get("/ping/list", "Controllers\PingController@listAction");
 $router->get("/ping/{id}", "Controllers\PingController@getAction");
