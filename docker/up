@@ -4,4 +4,4 @@ SCRIPT_DIR=$(readlink -e $(dirname $0))
 
 . $(dirname $0)/func.sh
 
-bash -c "cd ${SCRIPT_DIR} && ${SUDO_CMD} docker-compose -p 'vladis' up -d --build"
+bash -c "cd ${SCRIPT_DIR} && ${SUDO_CMD} docker-compose -p 'pingservice' up -d --build"

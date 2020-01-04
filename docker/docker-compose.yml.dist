@@ -1,9 +1,9 @@
 ﻿version: '3'
 services:
   php:
-    container_name: vladis_php
+    container_name: pingservice_php
     build: build/php
-    image: vladis/php
+    image: pingservice/php
     volumes:
       - "../back:/var/www"
       - "./build/php/php.ini:/usr/local/etc/php/php.ini:ro"
@@ -12,11 +12,11 @@ services:
     depends_on:
       - db
     networks:
-      - vladis
+      - pingservice
   nginx_back:
-    container_name: vladis_nginx_back
+    container_name: pingservice_nginx_back
     build: build/nginx_back
-    image: vladis/nginx_back
+    image: pingservice/nginx_back
     expose:
       - "80"
     ports:
@@ -27,11 +27,11 @@ services:
     depends_on:
       - db
     networks:
-      - vladis
+      - pingservice
   db:
-    container_name: vladis_db
+    container_name: pingservice_db
     build: build/db
-    image: vladis/db
+    image: pingservice/db
     volumes:
      - "./volumes/pgdata:/var/lib/postgresql/data"
     tmpfs:
@@ -44,13 +44,13 @@ services:
     ports:
      - "5432:5432"
     networks:
-      vladis:
+      pingservice:
         aliases:
           - postgresql
   node:
-    container_name: vladis_node
+    container_name: pingservice_node
     build: build/node
-    image: vladis/node
+    image: pingservice/node
     volumes:
       - './volumes/npm:/.npm'
       - './volumes/npm:/home/node/.npm'
@@ -58,11 +58,11 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - vladis
+      - pingservice
   nginx_front:
-    container_name: vladis_nginx_front
+    container_name: pingservice_nginx_front
     build: build/nginx_front
-    image: vladis/nginx_front
+    image: pingservice/nginx_front
     expose:
       - "80"
     ports:
@@ -72,7 +72,7 @@ services:
     depends_on:
       - node
     networks:
-      - vladis
+      - pingservice
 networks:
-  vladis:
+  pingservice:
     external: true

@@ -1,2 +1,0 @@
-192.168.70.1 - - [20/Jun/2019:09:29:10 +0000] "GET / HTTP/1.1" 200 22481 "-" "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36"
-192.168.70.1 - - [20/Jun/2019:09:29:10 +0000] "GET /favicon.ico HTTP/1.1" 200 22461 "http://pingservice.local:8081/" "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36"

@@ -2,12 +2,12 @@
 
 DIR=$(readlink -e $(dirname $0))
 SUDO_CMD=$(test -z $(id -Gn | xargs -n1 | grep '^docker$') && echo sudo)
-NET_NAME=vladis
+NET_NAME=pingservice
 BACK_DIR="/var/www"
 FRONT_DIR="/app"
 NPM_HOME=${NPM_HOME:-${DIR}/volumes/npm}
-PHP_CONTAINER_NAME=vladis/php
-NODE_CONTAINER_NAME=vladis/node
+PHP_CONTAINER_NAME=pingservice/php
+NODE_CONTAINER_NAME=pingservice/node
 
 php_container() {
     ${SUDO_CMD} docker run \

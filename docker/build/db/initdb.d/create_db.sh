@@ -2,12 +2,12 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-	CREATE USER vladis WITH SUPERUSER LOGIN PASSWORD 'vladis';
-	CREATE DATABASE vladis;
-	GRANT ALL PRIVILEGES ON DATABASE vladis TO vladis;
+	CREATE USER pingservice WITH SUPERUSER LOGIN PASSWORD 'pingservice';
+	CREATE DATABASE pingservice;
+	GRANT ALL PRIVILEGES ON DATABASE pingservice TO pingservice;
 EOSQL
 
-psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username "pingservice" --dbname "pingservice" <<-EOSQL
 	create table groups
     (
         id serial not null constraint groups_pkey primary key,
@@ -15,7 +15,7 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
         created_at timestamp(0)
     );
 
-    alter table groups owner to vladis;
+    alter table groups owner to pingservice;
 
     create table servers
     (
@@ -26,7 +26,7 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
         group_id integer not null constraint servers_group_id_foreign references groups on delete cascade
     );
 
-    alter table servers owner to vladis;
+    alter table servers owner to pingservice;
 
     create index servers_id_groups_id_index on servers (id, group_id);
 
@@ -38,7 +38,7 @@ psql -v ON_ERROR_STOP=1 --username "vladis" --dbname "vladis" <<-EOSQL
         success boolean default false not null
     );
 
-    alter table pings owner to vladis;
+    alter table pings owner to pingservice;
 
     create index pings_id_servers_id_index on pings (id, server_id);
 EOSQL

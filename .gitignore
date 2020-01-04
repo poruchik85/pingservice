@@ -1,6 +1,7 @@
 .idea
 /docker/docker-compose.yml
 /docker/volumes/*
+/docker/logs/*
 
 /back/config.json
 /back/tests/utils

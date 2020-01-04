@@ -17,7 +17,7 @@ class PgConnectorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->dbConnectionString = "dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis";
+        $this->dbConnectionString = "dbname=pingservice; host=postgresql; port=5432; user=pingservice; password=pingservice";
 
         $this->connector = new PgConnector($this->dbConnectionString);
     }

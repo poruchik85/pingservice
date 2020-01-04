@@ -15,9 +15,9 @@ class ConfigReaderTest extends TestCase
     {
         $directory = [
             "config" => [
-                "config.json" => "{\"dbConnectionString\": \"dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis\"}",
-                "wrongconfig.json" => "{\"wtf\": \"dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis\"}",
-                "brokenconfig.json" => "{\"dbConnectionString\": \"dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis\"",
+                "config.json" => "{\"dbConnectionString\": \"dbname=pingservice; host=postgresql; port=5432; user=pingservice; password=pingservice\"}",
+                "wrongconfig.json" => "{\"wtf\": \"dbname=pingservice; host=postgresql; port=5432; user=pingservice; password=pingservice\"}",
+                "brokenconfig.json" => "{\"dbConnectionString\": \"dbname=pingservice; host=postgresql; port=5432; user=pingservice; password=pingservice\"",
             ]
         ];
 
@@ -30,7 +30,7 @@ class ConfigReaderTest extends TestCase
         $config = new ConfigReader($configPath);
 
         $this->assertEquals(
-            "dbname=vladis; host=postgresql; port=5432; user=vladis; password=vladis",
+            "dbname=pingservice; host=postgresql; port=5432; user=pingservice; password=pingservice",
             $config->dbConnectionString
         );
     }

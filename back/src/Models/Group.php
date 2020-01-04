@@ -27,7 +27,7 @@ class Group extends Model
 
     public function getServers() {
         $query = <<<sql
-select * from vladis.public.groups;
+select * from pingservice.public.groups;
 sql;
 
         self::$connector->select($query);
