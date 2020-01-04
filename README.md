@@ -1,3 +1,8 @@
+Проект представляет из себя тестовое задание:
+- написать веб-сервис, позволяющий создавать/удалять/редактировать группы хостов и хосты с IP-адресами и/или именами, пинговать хосты, хранить историю пингов;
+- язык - PHP;
+- не использовать PHP-фреймворки;
+
 # 1. Описание
 
 Проект состоит из трёх частей:
@@ -126,10 +131,8 @@ docker-compose --version
 ```bash
 git clone https://github.com/poruchik85/pingservice.git
 ```
-Проект склонируется в папку **pingservice**, сразу переходим в неё - `cd pingservice` (далее все команды выполняются из этой папки) - и даём права на выполнение всем скриптам:
-```bash
-sudo chmod 755 docker/down docker/install.sh docker/autoloaderupdate docker/func.sh docker/npm docker/php docker/runtests docker/up docker/vue
-```
+Проект склонируется в папку **pingservice**, сразу переходим в неё - `cd pingservice` - далее все команды выполняются из этой папки.
+
 Запуск:
 ```bash
 docker/install.sh
